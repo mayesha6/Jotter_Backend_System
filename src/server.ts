@@ -1,44 +1,79 @@
-import cookieParser from "cookie-parser";
-import cors from "cors";
-import express, { Request, Response } from "express";
-import expressSession from "express-session";
-import passport from "passport";
+/* eslint-disable no-console */
+import { Server } from "http";
+import mongoose from "mongoose";
+import app from "./app";
 import { envVars } from "./app/config/env";
-import "./app/config/passport";
-import { globalErrorHandler } from "./app/middlewares/globalErrorHandler";
-import notFound from "./app/middlewares/notFound";
-import { router } from "./app/routes";
+import { connectRedis } from "./app/config/redis.config";
+import { seedSuperAdmin } from "./app/utils/seedSuperAdmin";
 
-const app = express()
+let server: Server;
 
 
-app.use(expressSession({
-    secret: envVars.EXPRESS_SESSION_SECRET,
-    resave: false,
-    saveUninitialized: false
-}))
-app.use(passport.initialize())
-app.use(passport.session())
-app.use(cookieParser())
-app.use(express.json())
-app.set("trust proxy", 1);
-app.use(express.urlencoded({ extended: true }))
-app.use(cors({
-    origin: envVars.FRONTEND_URL,
-    credentials: true
-}))
+const startServer = async () => {
+    try {
+        await mongoose.connect(envVars.DB_URL)
 
-app.use("/api/v1", router)
+        console.log("Connected to DB!!");
 
-app.get("/", (req: Request, res: Response) => {
-    res.status(200).json({
-        message: "Welcome to Jotter System Backend"
-    })
+        server = app.listen(envVars.PORT, () => {
+            console.log(`Server is listening to port ${envVars.PORT}`);
+        });
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+(async () => {
+    await connectRedis()
+    await startServer()
+    await seedSuperAdmin()
+})()
+
+process.on("SIGTERM", () => {
+    console.log("SIGTERM signal recieved... Server shutting down..");
+
+    if (server) {
+        server.close(() => {
+            process.exit(1)
+        });
+    }
+
+    process.exit(1)
+})
+
+process.on("SIGINT", () => {
+    console.log("SIGINT signal recieved... Server shutting down..");
+
+    if (server) {
+        server.close(() => {
+            process.exit(1)
+        });
+    }
+
+    process.exit(1)
 })
 
 
-app.use(globalErrorHandler)
+process.on("unhandledRejection", (err) => {
+    console.log("Unhandled Rejecttion detected... Server shutting down..", err);
 
-app.use(notFound)
+    if (server) {
+        server.close(() => {
+            process.exit(1)
+        });
+    }
 
-export default app
+    process.exit(1)
+})
+
+process.on("uncaughtException", (err) => {
+    console.log("Uncaught Exception detected... Server shutting down..", err);
+
+    if (server) {
+        server.close(() => {
+            process.exit(1)
+        });
+    }
+
+    process.exit(1)
+})
