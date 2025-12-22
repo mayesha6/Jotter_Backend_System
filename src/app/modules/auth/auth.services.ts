@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
-/* eslint-disable @typescript-eslint/no-non-null-assertion */
 import bcryptjs from "bcryptjs";
 import httpStatus from "http-status-codes";
 import jwt, { JwtPayload } from "jsonwebtoken";
@@ -10,7 +8,8 @@ import { sendEmail } from "../../utils/sendEmail";
 import { createNewAccessTokenWithRefreshToken } from "../../utils/userTokens";
 import { IAuthProvider, IsActive } from "../user/user.interface";
 import { User } from "../user/user.model";
-
+import { redisClient } from "../../config/redis.config";
+import crypto from "crypto";
 
 const getNewAccessToken = async (refreshToken: string) => {
     const newAccessToken = await createNewAccessTokenWithRefreshToken(refreshToken)
@@ -84,13 +83,28 @@ const forgotPassword = async (email: string) => {
 
   if (!user) throw new AppError(404, "User not found");
   if (!user.isVerified) throw new AppError(401, "User not verified");
-
-  const otp = Math.floor(100000 + Math.random() * 900000).toString();
+  if (user.isDeleted) throw new AppError(400, "User is deleted");
+  if (user.isActive === "BLOCKED" || user.isActive === "INACTIVE") {
+    throw new AppError(400, `User is ${user.isActive}`);
+  }
 
   const redisKey = `otp:reset:${email}`;
 
+  const existingOtp = await redisClient.get(redisKey);
+  if (existingOtp) {
+    throw new AppError(429, "OTP already sent. Please wait 2 minutes.");
+  }
+const generateOtp = (length = 6) => {
+    //6 digit otp
+    const otp = crypto.randomInt(10 ** (length - 1), 10 ** length).toString()
+
+
+    return otp
+}
+  const otp = generateOtp();
+
   await redisClient.set(redisKey, otp, {
-    expiration: { type: "EX", value: 120 } // 2 minutes
+    expiration: { type: "EX", value: 120 },
   });
 
   await sendEmail({
@@ -99,10 +113,11 @@ const forgotPassword = async (email: string) => {
     templateName: "otp",
     templateData: {
       name: user.name,
-      otp
-    }
+      otp,
+    },
   });
 };
+
 
 const setPassword = async (userId: string, plainPassword: string) => {
     const user = await User.findById(userId);

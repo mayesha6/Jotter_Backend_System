@@ -1,4 +1,4 @@
-import { Types } from "mongoose";
+import { Types, Document } from "mongoose";
 
 export enum Role {
     SUPER_ADMIN = "SUPER_ADMIN",
@@ -18,7 +18,7 @@ export enum IsActive {
     BLOCKED = "BLOCKED"
 }
 
-export interface IUser {
+export interface IUser{
     _id?: Types.ObjectId
     name: string;
     email: string;
