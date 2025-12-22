@@ -53,16 +53,6 @@ const loadEnvVariables = (): EnvConfig => {
     "GOOGLE_CALLBACK_URL",
     "EXPRESS_SESSION_SECRET",
     "FRONTEND_URL",
-    "SSL_STORE_ID",
-    "SSL_STORE_PASS",
-    "SSL_PAYMENT_API",
-    "SSL_VALIDATION_API",
-    "SSL_SUCCESS_FRONTEND_URL",
-    "SSL_FAIL_FRONTEND_URL",
-    "SSL_CANCEL_FRONTEND_URL",
-    "SSL_SUCCESS_BACKEND_URL",
-    "SSL_FAIL_BACKEND_URL",
-    "SSL_CANCEL_BACKEND_URL",
     "CLOUDINARY_CLOUD_NAME",
     "CLOUDINARY_API_KEY",
     "CLOUDINARY_API_SECRET",
@@ -75,7 +65,6 @@ const loadEnvVariables = (): EnvConfig => {
     "REDIS_PORT",
     "REDIS_USERNAME",
     "REDIS_PASSWORD",
-    "SSL_IPN_URL",
   ];
 
   requiredEnvVariables.forEach((key) => {
