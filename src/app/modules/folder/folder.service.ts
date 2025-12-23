@@ -14,7 +14,11 @@ const getFolder = async (id: string, userId: string) => {
 };
 
 const updateFolder = async (id: string, userId: string, name: string) => {
-  return Folder.findOneAndUpdate({ _id: id, user: userId }, { name }, { new: true });
+  return Folder.findOneAndUpdate(
+    { _id: id, user: userId },
+    { name },
+    { new: true }
+  );
 };
 
 const deleteFolder = async (id: string, userId: string) => {

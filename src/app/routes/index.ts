@@ -2,6 +2,8 @@ import { Router } from "express"
 import { UserRoutes } from "../modules/user/user.routes"
 import { AuthRoutes } from "../modules/auth/auth.routes"
 import { OtpRoutes } from "../modules/otp/otp.routes"
+import { FolderRoutes } from "../modules/folder/folder.routes"
+import { FileRoutes } from "../modules/file/file.routes"
 
 
 export const router = Router()
@@ -18,7 +20,15 @@ const moduleRoutes = [
     {
         path: "/user",
         route: UserRoutes
-    }
+    },
+    {
+        path: "/folder",
+        route: FolderRoutes
+    },
+    {
+        path: "/file",
+        route: FileRoutes
+    },
 
 ]
 
