@@ -25,7 +25,7 @@ const getAllFolders = catchAsync(async (req: Request, res: Response) => {
 
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.CREATED,
+    statusCode: httpStatus.OK,
     message: "All folders Retrieved Successfully",
     data: folders,
   });
@@ -39,7 +39,7 @@ const getFolder = catchAsync(async (req: Request, res: Response) => {
   );
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.CREATED,
+    statusCode: httpStatus.OK,
     message: "Retrieved a folder successfully",
     data: folder,
   });
@@ -54,7 +54,7 @@ const updateFolder = catchAsync(async (req: Request, res: Response) => {
   );
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.CREATED,
+    statusCode: httpStatus.OK,
     message: "Folder updated successfully",
     data: folder,
   });
@@ -68,7 +68,7 @@ const deleteFolder = catchAsync(async (req: Request, res: Response) => {
   );
   sendResponse(res, {
     success: true,
-    statusCode: httpStatus.CREATED,
+    statusCode: httpStatus.OK,
     message: "Folder deleted successfully",
     data: deletedFolder,
   });
