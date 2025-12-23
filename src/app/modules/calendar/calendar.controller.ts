@@ -40,7 +40,21 @@ const getFilesByCalendar = catchAsync(async (req, res) => {
   });
 });
 
+const getRecentFilesAndFolders = catchAsync(async (req: Request, res: Response) => {
+  const user = req.user as JwtPayload;
+
+  const data = await CalendarServices.getRecentFilesAndFolders(user.userId, 5);
+
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "Recent files & folders retrieved",
+    data,
+  });
+});
+
 export const CalendarController = {
   getFoldersByCalendar,
-  getFilesByCalendar
+  getFilesByCalendar,
+  getRecentFilesAndFolders
 };

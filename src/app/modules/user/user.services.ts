@@ -1,4 +1,4 @@
-import bcryptjs from "bcryptjs";
+
 import httpStatus from "http-status-codes";
 import { envVars } from "../../config/env";
 import AppError from "../../errorHelpers/AppError";
@@ -7,6 +7,8 @@ import { User } from "./user.model";
 import { userSearchableFields } from "./user.constant";
 import { QueryBuilder } from "../../utils/QueryBuiler";
 import { JwtPayload } from "jsonwebtoken";
+import { deleteImageFromCLoudinary, uploadBufferToCloudinary } from "../../config/cloudinary.config";
+import bcryptjs from 'bcryptjs';
 
 const createUser = async (payload: Partial<IUser>) => {
   const { email, password, ...rest } = payload;
@@ -107,11 +109,48 @@ const updateUser = async (userId: string, payload: Partial<IUser>, decodedToken:
     return newUpdatedUser
 }
 
+export const updateMyProfile = async (
+  userId: string,
+  payload: any,
+  decodedToken: JwtPayload,
+  file?: Express.Multer.File
+) => {
+  const user = await User.findById(userId);
+  if (!user) throw new AppError(404, "User not found");
+
+  if (decodedToken.role === "USER" && decodedToken.userId !== userId) {
+    throw new AppError(403, "You are not authorized");
+  }
+
+  if (payload.password) {
+    payload.password = await bcryptjs.hash(
+      payload.password,
+      Number(envVars.BCRYPT_SALT_ROUND)
+    );
+  }
+
+  if (file) {
+    if (user.picture) {
+      await deleteImageFromCLoudinary(user.picture);
+    }
+
+    const uploadResult = await uploadBufferToCloudinary(file.buffer, `profile-${userId}`);
+    payload.picture = uploadResult?.secure_url;
+  }
+
+  const updated = await User.findByIdAndUpdate(userId, payload, {
+    new: true,
+    runValidators: true,
+  });
+
+  return updated;
+};
 
 export const UserServices = {
   createUser,
   getAllUsers,
   getMe,
   getSingleUser,
-  updateUser
+  updateUser,
+  updateMyProfile
 };

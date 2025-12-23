@@ -4,6 +4,8 @@ import { validateRequest } from "../../middlewares/validateRequest";
 import { UserControllers } from "./user.controller";
 import { Role } from "./user.interface";
 import { updateUserZodSchema } from "./user.validation";
+import { multerUpload } from "../../config/multer.config";
+import { parseFormDataMiddleware } from "../../middlewares/parseFormDataMiddleware";
 
 const router = Router();
 
@@ -13,6 +15,14 @@ router.get(
   UserControllers.getAllUsers
 );
 router.get("/me", checkAuth(...Object.values(Role)), UserControllers.getMe);
+router.patch(
+  "/update-my-profile",
+  checkAuth(...Object.values(Role)),
+  multerUpload.single("file"),          
+  parseFormDataMiddleware,              
+  validateRequest(updateUserZodSchema), 
+  UserControllers.updateMyProfile
+);
 router.get(
   "/:id",
   checkAuth(Role.ADMIN, Role.SUPER_ADMIN),

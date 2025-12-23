@@ -90,7 +90,7 @@ const getAllFiles = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: "All files retrieved",
+    message: "All files retrieved successfully",
     data: files,
   });
 });
@@ -108,8 +108,67 @@ const getFilesByType = catchAsync(async (req: Request, res: Response) => {
   sendResponse(res, {
     success: true,
     statusCode: httpStatus.OK,
-    message: `${type.toUpperCase()} files retrieved`,
+    message: `${type.toUpperCase()} files retrieved successfully`,
     data: files,
+  });
+});
+
+const renameFile = catchAsync(async (req, res) => {
+  const decodedToken = req.user as JwtPayload;
+  const file = await FileService.renameFile(
+    req.params.id,
+    decodedToken.userId,
+    req.body.name
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "File renamed successfully",
+    data: file,
+  });
+});
+
+const copyFile = catchAsync(async (req, res) => {
+  const decodedToken = req.user as JwtPayload;
+  const file = await FileService.copyFile(
+    req.params.id,
+    decodedToken.userId,
+    req.body.folder
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: "File copied successfully",
+    data: file,
+  });
+});
+
+const duplicateFile = catchAsync(async (req, res) => {
+  const decodedToken = req.user as JwtPayload;
+  const file = await FileService.duplicateFile(
+    req.params.id,
+    decodedToken.userId
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.CREATED,
+    message: "File duplicated successfully",
+    data: file,
+  });
+});
+
+const shareFile = catchAsync(async (req, res) => {
+  const decodedToken = req.user as JwtPayload;
+  const file = await FileService.shareFile(
+    req.params.id,
+    decodedToken.userId,
+    req.body.userId
+  );
+  sendResponse(res, {
+    success: true,
+    statusCode: httpStatus.OK,
+    message: "File shared successfully",
+    data: file,
   });
 });
 
@@ -122,4 +181,8 @@ export const FileController = {
   exportFile,
   getAllFiles,
   getFilesByType,
+  renameFile,
+  copyFile,
+  duplicateFile,
+  shareFile,
 };

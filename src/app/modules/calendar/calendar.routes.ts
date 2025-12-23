@@ -15,5 +15,10 @@ router.get(
   checkAuth(...Object.values(Role)),
   CalendarController.getFilesByCalendar
 );
+router.get(
+  "/recent",
+  checkAuth(...Object.values(Role)),
+  CalendarController.getRecentFilesAndFolders
+);
 
 export const CalendarRoutes = router;

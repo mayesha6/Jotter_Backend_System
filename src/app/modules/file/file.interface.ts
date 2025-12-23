@@ -11,5 +11,7 @@ export interface IFile {
   url?: string;
   isFavourite?: boolean;
   content?: string;
+  isShared?: boolean;
+  sharedWith?: Types.ObjectId[];
   createdAt?: Date;
 }

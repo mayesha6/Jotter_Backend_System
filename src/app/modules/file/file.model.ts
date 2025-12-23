@@ -12,7 +12,9 @@ const fileSchema = new Schema<IFileDoc>(
     content: { type: String, default: "" },
     size: { type: Number, default: 0 },
     url: { type: String, default: "" },
-    isFavourite: { type: Boolean, default: false }
+    isFavourite: { type: Boolean, default: false },
+    isShared: { type: Boolean, default: false },
+    sharedWith: [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true, versionKey: false }
 );

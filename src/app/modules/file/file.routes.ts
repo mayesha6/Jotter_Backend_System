@@ -19,7 +19,14 @@ router.patch("/unfavourite/:id", checkAuth(...Object.values(Role)), FavouriteCon
 router.patch("/:id/content", checkAuth(...Object.values(Role)), FileController.updateContent);
 router.get("/:id/export", checkAuth(...Object.values(Role)), FileController.exportFile);
 
+router.patch("/:id/rename", checkAuth(...Object.values(Role)), FileController.renameFile);
+router.post("/:id/copy", checkAuth(...Object.values(Role)), FileController.copyFile);
+router.post("/:id/duplicate", checkAuth(...Object.values(Role)), FileController.duplicateFile);
+router.post("/:id/share", checkAuth(...Object.values(Role)), FileController.shareFile);
+
 router.get("/:id", checkAuth(...Object.values(Role)), FileController.getFile);
 router.delete("/:id", checkAuth(...Object.values(Role)), FileController.deleteFile);
+
+
 
 export const FileRoutes = router
