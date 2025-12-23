@@ -9,7 +9,7 @@ export interface IFile {
   type: FileType | string;
   size?: number;
   url?: string;
-  mimeType?: string;
+  isFavourite?: boolean;
   content?: string;
   createdAt?: Date;
 }

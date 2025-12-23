@@ -5,7 +5,6 @@ import { FileService } from "./file.services";
 import httpStatus from 'http-status-codes';
 import { JwtPayload } from "jsonwebtoken";
 
-// Create virtual doc
 const createVirtualFile = catchAsync(async (req: Request, res: Response) => {
   const decodedToken = req.user as JwtPayload;
   const file = await FileService.createFile(decodedToken.userId, req.body);

@@ -1,5 +1,5 @@
 import { Schema, model, Document } from "mongoose";
-import { IFile, FileType } from "./file.interface";
+import { IFile } from "./file.interface";
 
 export interface IFileDoc extends Omit<IFile, "_id">, Document {}
 
@@ -12,7 +12,7 @@ const fileSchema = new Schema<IFileDoc>(
     content: { type: String, default: "" },
     size: { type: Number, default: 0 },
     url: { type: String, default: "" },
-    mimeType: { type: String },
+    isFavourite: { type: Boolean, default: false }
   },
   { timestamps: true, versionKey: false }
 );

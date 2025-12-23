@@ -1,4 +1,3 @@
-// folder.controller.ts
 import { Request, Response } from "express";
 import { FolderService } from "./folder.service";
 import { catchAsync } from "../../utils/catchAsync";
