@@ -6,7 +6,8 @@ export class QueryBuilder<T> {
   public readonly query: Record<string, string>;
 
   constructor(modelQuery: Query<T[], T>, query: Record<string, string>) {
-    this.modelQuery = modelQuery;
+    // this.modelQuery = modelQuery;
+    this.modelQuery = modelQuery.lean<T[]>();
     this.query = query;
   }
 
@@ -44,7 +45,7 @@ export class QueryBuilder<T> {
   fields(): this {
     const fields = this.query.fields?.split(",").join(" ") || "";
 
-    this.modelQuery = this.modelQuery.select(fields);
+    this.modelQuery = this.modelQuery.select(fields).lean<T[]>();
 
     return this;
   }
