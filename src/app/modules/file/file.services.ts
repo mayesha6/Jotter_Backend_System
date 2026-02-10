@@ -99,7 +99,7 @@ const getAllFiles = async (userId: string) => {
 };
 
 const getFilesByType = async (userId: string, type: string) => {
-  let filter: Record<string, any> = { user: userId };
+  const filter: Record<string, any> = { user: userId };
 
   switch (type.toLowerCase()) {
     case "pdf":
